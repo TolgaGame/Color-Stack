@@ -116,36 +116,38 @@ public class PlayerController : Singleton<PlayerController>
         upgradeFx.Play();
     }
 
-     // ===================================== TRIGGER
-
-    private void OnCollisionEnter(Collision other)
-    {
-        if (other.gameObject.CompareTag("Cookie"))
-        {
-            HapticManager.Instance.Vibrate();
-            // COOKIE COLOR MATCH
-            Cookies cookie = other.gameObject.GetComponent<Cookies>();
-            Color cookieColor = cookie.GetColor();
-            if (MatchColor(cookieColor))
-            {
-                RightColor();
-            }
-            else
-            {
-                Destroy(other.gameObject);
-                WrongColor();
-            }
-        }
-    }
+    // ===================================== TRIGGER
 
     private void OnTriggerEnter(Collider other)
     {
+
+        if (other.gameObject.CompareTag("Cookie"))
+        {
+            Cookies cookies = other.gameObject.GetComponent<Cookies>();
+            other.tag ="Untagged";
+            cookies.ParentCons(other.gameObject);
+
+            CookieList cookieList = FindObjectOfType<CookieList>();
+            cookieList.cookie.Add(other.gameObject);
+
+            // Color cookieColor = cookies.GetColor();
+            // if (MatchColor(cookieColor))
+            //     RightColor();
+            // else
+            // {
+            //     Destroy(other.gameObject);
+            //     WrongColor();
+            // }
+            HapticManager.Instance.Vibrate();
+        }
+
+        // PLAYER && COLOR GATE
         if (other.CompareTag("Gate"))
         {
             Gate gate = other.GetComponent<Gate>();
             ChangeColor(gate.myColor, gate.index);
         }
-
+        // PLAYER && FINISH
         if (other.gameObject.CompareTag("Finish"))
         {
             transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 0, transform.localEulerAngles.z);
@@ -153,13 +155,13 @@ public class PlayerController : Singleton<PlayerController>
             Color color = new Color32(0, 111, 255, 255);
             water.material.DOColor(color, 1f);
         }
-
+        // PLAYER && BONUS LINE
         if (other.CompareTag("BonusLine"))
         {
             Destroy(other.gameObject);
             GameManager.Instance.FinishLevel();
         }
-
+        // PLAYER && COIN
         if (other.gameObject.CompareTag("Coin"))
         {
             Destroy(other.gameObject);
@@ -222,3 +224,26 @@ public class PlayerController : Singleton<PlayerController>
     }
 
 }
+
+
+
+
+
+
+    // private void OnCollisionEnter(Collision other)
+    // {
+    //     if (other.gameObject.CompareTag("Cookie"))
+    //     {
+    //         HapticManager.Instance.Vibrate();
+           
+    //         Cookies cookie = other.gameObject.GetComponent<Cookies>();
+    //         Color cookieColor = cookie.GetColor();
+    //         if (MatchColor(cookieColor))
+    //             RightColor();
+    //         else
+    //         {
+    //             Destroy(other.gameObject);
+    //             WrongColor();
+    //         }
+    //     }
+    // }

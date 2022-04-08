@@ -6,43 +6,38 @@ using UnityEngine;
 
 public class Cookies : MonoBehaviour
 {
-    
-    public int index;
     public int[] colorIndex;
     public int[] skinIndex;
     private Renderer[] meshRenderer;
     private Animator animator;
     private Color currentColor;
-    private bool isAlive;
 
-    ///
+    /// PARENT CONS SYSTEM
     private Transform player;
     private Vector3 velocity = Vector3.zero;
-    [HideInInspector] public float movementTime = 0;
+    private float movementTime;
     private CookieList cookieList;
     private ConstraintSource cs;
-    public bool controlBoolPatoto = false;
 
     // ====================================
 
-    private void Awake()
-    {
-        isAlive = true;
-        meshRenderer = GetComponentsInChildren<Renderer>();
-        animator = GetComponent<Animator>();
-        currentColor = meshRenderer[skinIndex[0]].materials[colorIndex[0]].color;
-        cookieList = GameObject.Find("COOKIE LIST").GetComponent<CookieList>();
-    }
-
     private void Start()
     {
+        if (player == false)
+        {
+            GameObject x = transform.GetChild(1).transform.gameObject;
+            meshRenderer = x.GetComponentsInChildren<Renderer>();
+            animator = GetComponent<Animator>();
+            currentColor = meshRenderer[skinIndex[0]].materials[colorIndex[0]].color; 
+        }
+        cookieList = GameObject.Find("COOKIE LIST").GetComponent<CookieList>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
     }
       
     public void ParentCons(GameObject cookie)
     {
         cookie.gameObject.GetComponent<Cookies>().enabled = true;
-        cookie.gameObject.GetComponent<Cookies>().movementTime = cookieList.cookie.Count * 0.03f;
+        cookie.gameObject.GetComponent<Cookies>().movementTime = cookieList.cookie.Count * 0.06f;
 
         if (cookieList.cookie.Count <= 1)
             cs.sourceTransform = player;
@@ -51,12 +46,12 @@ public class Cookies : MonoBehaviour
 
         cs.weight = 1;
         cookie.GetComponent<ParentConstraint>().AddSource(cs);
-        cookie.gameObject.GetComponent<ParentConstraint>().SetTranslationOffset(0, new Vector3(0, -1.5f, 0));
+        cookie.gameObject.GetComponent<ParentConstraint>().SetTranslationOffset(0, new Vector3(0f, 0f, 2f));
         cookie.gameObject.GetComponent<ParentConstraint>().enabled = true;
         cookie.gameObject.GetComponent<ParentConstraint>().constraintActive = true;
 
-        if (cookieList.cookie.Count > 2)
-            StartCoroutine(ScaleEffect());
+       // if (cookieList.cookie.Count > 2)
+            //StartCoroutine(ScaleEffect());
 
     }
 
@@ -66,11 +61,11 @@ public class Cookies : MonoBehaviour
         {
             if (cookieList.cookie.Count > 1)
             {
-                cookieList.cookie[cookieList.cookie.Count-1-i].transform.DOScale(1.1f, 0.05f);
+                cookieList.cookie[cookieList.cookie.Count-1-i].transform.DOScale(2.2f, 0.05f);
                 
                 yield return new WaitForSeconds(0.03f);
 
-                cookieList.cookie[cookieList.cookie.Count-1-i].transform.DOScale(1f, 0.05f);
+                cookieList.cookie[cookieList.cookie.Count-1-i].transform.DOScale(2f, 0.05f);
             }
         }
     }
@@ -79,17 +74,12 @@ public class Cookies : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Wall"))
-        {
-                // TO DO
-        }
-
         // COLLECT NEW COOKIE
        if (other.CompareTag("Cookie"))
        {
-            Cookies patoto = other.gameObject.GetComponentInChildren<Cookies>();
+            Cookies cookies = other.gameObject.GetComponentInChildren<Cookies>();
             other.tag ="Untagged";
-            CookieList patotoList = FindObjectOfType<CookieList>();
+            CookieList cookieList = FindObjectOfType<CookieList>();
             cookieList.cookie.Add(other.gameObject);
             ParentCons(other.gameObject);
        }

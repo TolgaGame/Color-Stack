@@ -10,7 +10,6 @@ TagManager:
   - Gate
   - Obstacle
   - Wall
-  - Boss
   - Bonus
   - BonusLevel
   - BonusLine
