@@ -6,7 +6,7 @@ using UnityEngine;
 public class Cookies : MonoBehaviour
 {
     public int myColorNumber;
-    public Renderer[] meshRenderer;
+    public SkinnedMeshRenderer[] myBody;
     private Animator animator;
 
     /// PARENT CONS SYSTEM
@@ -19,27 +19,34 @@ public class Cookies : MonoBehaviour
 
     // ==================================== *** START
 
-    private void Start()
+    private void Awake() 
     {
         cookieList = GameObject.Find("COOKIE LIST").GetComponent<CookieList>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         animator = GetComponent<Animator>();
+
+        Transform x = transform.GetChild(1);
+        Debug.Log(x.name);
+        myBody[0] = x.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>();
+        myBody[1] = x.transform.GetChild(1).GetComponent<SkinnedMeshRenderer>();
+    }
+
+    private void Start()
+    {
+        
     }
     
     private void Update()
     {
-        if (controlActive == true)
-        {
-            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, transform.position.y, transform.position.z), 
-            ref velocity, movementTime);
-        }
+        transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, transform.position.y, transform.position.z), 
+        ref velocity, movementTime);
     }
 
     public void ParentCons(GameObject cookie)
     {
-        cookie.gameObject.GetComponent<Cookies>().movementTime = cookieList.cookie.Count * 1f;
-        animator.Play("Run");
-
+        cookie.gameObject.GetComponent<Cookies>().enabled = true;
+        cookie.gameObject.GetComponent<Cookies>().movementTime = cookieList.cookie.Count * 0.03f;
+        
         if (cookieList.cookie.Count <= 1)
             cs.sourceTransform = player;
         else
@@ -47,10 +54,10 @@ public class Cookies : MonoBehaviour
 
         cs.weight = 1;
         cookie.GetComponent<ParentConstraint>().AddSource(cs);
-        cookie.gameObject.GetComponent<ParentConstraint>().SetTranslationOffset(0, new Vector3(0f, 0f, 1.5f));
+        cookie.gameObject.GetComponent<ParentConstraint>().SetTranslationOffset(0, new Vector3(0f, 0f, 1f));
         cookie.gameObject.GetComponent<ParentConstraint>().enabled = true;
         cookie.gameObject.GetComponent<ParentConstraint>().constraintActive = true;
-        controlActive = true;
+        animator.Play("Run");
 
        if (cookieList.cookie.Count > 2)
             StartCoroutine(ScaleEffect());
@@ -85,6 +92,31 @@ public class Cookies : MonoBehaviour
             cookieList.cookie.Add(other.gameObject);
             ParentCons(other.gameObject);
        }
+
+        // PLAYER && COLOR GATE
+        if (other.CompareTag("Gate"))
+        {
+            Gate gate = other.GetComponent<Gate>();
+            if (gate.colorNumber == 0)
+            {
+                myBody[0].material = cookieList.bodyColors[0];
+                myBody[1].material = cookieList.bodyColors[0];  
+                myColorNumber = 0;
+            }
+            else if (gate.colorNumber == 1)
+            {
+                myBody[0].material = cookieList.bodyColors[1];
+                myBody[1].material = cookieList.bodyColors[1]; 
+                myColorNumber = 1;
+            }
+            else if (gate.colorNumber == 2)
+            {
+                myBody[0].material = cookieList.bodyColors[2];
+                myBody[1].material = cookieList.bodyColors[2];
+                myColorNumber = 2;  
+            }
+
+        }
     }
 
     // ====================================

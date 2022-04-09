@@ -8,12 +8,15 @@ public class PlayerController : Singleton<PlayerController>
     [Header("GameObjects")]
     [Space]
     public Animator playerAnim;
-    [SerializeField] Color flashColor;
     [SerializeField] ParticleSystem upgradeFx;
-    [SerializeField] UpgradeManager up;
-    [SerializeField] Material[] colors;
+    [SerializeField] SkinnedMeshRenderer[] myBody;
+    
+    [Header("Other")]
+    [Space]
     [SerializeField] TextMeshProUGUI plusText;
+    [SerializeField] UpgradeManager up;
     [SerializeField] LowPolyWaterScript water;
+    private CookieList cookieList;
 
     [Header("Variables")]
     [Space]
@@ -34,13 +37,16 @@ public class PlayerController : Singleton<PlayerController>
     {
         Color color = new Color32(0, 111, 255, 255);
         water.material.DOColor(color, 1f);
+        cookieList = GameObject.Find("COOKIE LIST").GetComponent<CookieList>();
     } 
+  
    // ================== UPGRADE METHODS
 
     public void SpeedUp(int addSpeed)
     {
        //_moveSpeed += addSpeed;
     }
+    
     public void Upgrade()
     {
         upgradeFx.Play();
@@ -66,7 +72,7 @@ public class PlayerController : Singleton<PlayerController>
 
     private void OnTriggerEnter(Collider other)
     {
-
+        // PLAYER && FIRST COOKIE
         if (other.gameObject.CompareTag("Cookie"))
         {
             Cookies cookies = other.gameObject.GetComponent<Cookies>();
@@ -94,7 +100,25 @@ public class PlayerController : Singleton<PlayerController>
         if (other.CompareTag("Gate"))
         {
             Gate gate = other.GetComponent<Gate>();
-           // ChangeColor(gate.myColor, gate.index);
+            if (gate.colorNumber == 0)
+            {
+                myBody[0].material = cookieList.bodyColors[0];
+                myBody[1].material = cookieList.bodyColors[0];
+                playerColorNumber = 0;
+            }
+            else if (gate.colorNumber == 1)
+            {
+                myBody[0].material = cookieList.bodyColors[1];
+                myBody[1].material = cookieList.bodyColors[1];
+                playerColorNumber = 1;
+            }
+            else if (gate.colorNumber == 2)
+            {
+                myBody[0].material = cookieList.bodyColors[2];
+                myBody[1].material = cookieList.bodyColors[2]; 
+                playerColorNumber = 2;
+            }
+
         }
         // PLAYER && FINISH
         if (other.gameObject.CompareTag("Finish"))

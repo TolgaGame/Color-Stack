@@ -2,10 +2,8 @@
 
 public class Gate : MonoBehaviour
 {
-    #region Variables
 
-    public int index;
-    public Color myColor;
+    public int colorNumber;
+    public Material gateColor;
 
-    #endregion
 }
