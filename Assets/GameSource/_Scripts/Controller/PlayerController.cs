@@ -17,20 +17,10 @@ public class PlayerController : Singleton<PlayerController>
 
     [Header("Variables")]
     [Space]
-    [SerializeField] Transform _target;
-    private float _moveSpeed = 10f;
-    private float _slideSpeed = 5f;
-    private float _smoothness = 50;
-    private float _firstValue;
-    private float _lastValue;
-    private float _distance;
-    private float _calculatedValue;
-
-    // Private variables
+    public int playerColorNumber;
     [HideInInspector] public int perfectCounter;
     [HideInInspector] public int terribleCounter;
     [HideInInspector] public bool canPickBonus;
-    private Color currentColor;
     private Vector3 targetOffset;
 
    // ===================================== START
@@ -44,47 +34,19 @@ public class PlayerController : Singleton<PlayerController>
     {
         Color color = new Color32(0, 111, 255, 255);
         water.material.DOColor(color, 1f);
-    }
-
-    private void Update()
-    {
-        if (GameManager.Instance.isGameStarted)
-        {
-            transform.Translate(transform.forward * _moveSpeed * Time.deltaTime, Space.World);
-
-            if (Input.GetMouseButtonDown(0))
-                _firstValue = Input.mousePosition.x;
-            else if (Input.GetMouseButton(0))
-            {
-                _lastValue = Input.mousePosition.x;
-                _distance = _lastValue - _firstValue;
-                _calculatedValue = (_distance / Screen.width) * _smoothness;
-
-                MoveX(_calculatedValue);
-                _firstValue = _lastValue;
-            }
-        }
-    }
-
-    private void MoveX(float value)
-    {
-        transform.Translate(transform.right * _slideSpeed * value * Time.deltaTime, Space.World);
-    }
-  
-   // ===================================== METHODSS
+    } 
+   // ================== UPGRADE METHODS
 
     public void SpeedUp(int addSpeed)
     {
-       _moveSpeed += addSpeed;
+       //_moveSpeed += addSpeed;
+    }
+    public void Upgrade()
+    {
+        upgradeFx.Play();
     }
 
-    private bool MatchColor(Color targetColor)
-    {
-        if (targetColor == currentColor)
-            return true;
-        else
-            return false;
-    }
+    // ================== COLOR MATCH METHODS
 
     private void RightColor()
     {
@@ -100,22 +62,6 @@ public class PlayerController : Singleton<PlayerController>
         PlusSpawner(false);
     }
 
-    private void FallDown()
-    {
-        GameManager.Instance.GameOver();
-    }
-
-    private void ChangeColor(Color color,int index)
-    {
-        water.material.DOColor(color, .3f);
-        currentColor = colors[index].color;
-    }
-
-    public void Upgrade()
-    {
-        upgradeFx.Play();
-    }
-
     // ===================================== TRIGGER
 
     private void OnTriggerEnter(Collider other)
@@ -126,18 +72,21 @@ public class PlayerController : Singleton<PlayerController>
             Cookies cookies = other.gameObject.GetComponent<Cookies>();
             other.tag ="Untagged";
             cookies.ParentCons(other.gameObject);
+            int x = cookies.myColorNumber;
 
             CookieList cookieList = FindObjectOfType<CookieList>();
             cookieList.cookie.Add(other.gameObject);
 
-            // Color cookieColor = cookies.GetColor();
-            // if (MatchColor(cookieColor))
-            //     RightColor();
-            // else
-            // {
-            //     Destroy(other.gameObject);
-            //     WrongColor();
-            // }
+            if (playerColorNumber == x)
+            {
+                RightColor();
+                Debug.Log("RIGHT COLOR");
+            }
+            else
+            {
+                WrongColor();
+                Debug.Log("WRONG COLOR");
+            }
             HapticManager.Instance.Vibrate();
         }
 
@@ -145,7 +94,7 @@ public class PlayerController : Singleton<PlayerController>
         if (other.CompareTag("Gate"))
         {
             Gate gate = other.GetComponent<Gate>();
-            ChangeColor(gate.myColor, gate.index);
+           // ChangeColor(gate.myColor, gate.index);
         }
         // PLAYER && FINISH
         if (other.gameObject.CompareTag("Finish"))
@@ -224,26 +173,3 @@ public class PlayerController : Singleton<PlayerController>
     }
 
 }
-
-
-
-
-
-
-    // private void OnCollisionEnter(Collision other)
-    // {
-    //     if (other.gameObject.CompareTag("Cookie"))
-    //     {
-    //         HapticManager.Instance.Vibrate();
-           
-    //         Cookies cookie = other.gameObject.GetComponent<Cookies>();
-    //         Color cookieColor = cookie.GetColor();
-    //         if (MatchColor(cookieColor))
-    //             RightColor();
-    //         else
-    //         {
-    //             Destroy(other.gameObject);
-    //             WrongColor();
-    //         }
-    //     }
-    // }

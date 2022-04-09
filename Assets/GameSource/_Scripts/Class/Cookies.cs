@@ -1,16 +1,13 @@
 ﻿using DG.Tweening;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine.Animations;
 using UnityEngine;
 
 public class Cookies : MonoBehaviour
 {
-    public int[] colorIndex;
-    public int[] skinIndex;
-    private Renderer[] meshRenderer;
+    public int myColorNumber;
+    public Renderer[] meshRenderer;
     private Animator animator;
-    private Color currentColor;
 
     /// PARENT CONS SYSTEM
     private Transform player;
@@ -18,26 +15,30 @@ public class Cookies : MonoBehaviour
     private float movementTime;
     private CookieList cookieList;
     private ConstraintSource cs;
+    [HideInInspector] public bool controlActive = false;
 
-    // ====================================
+    // ==================================== *** START
 
     private void Start()
     {
-        if (player == false)
-        {
-            GameObject x = transform.GetChild(1).transform.gameObject;
-            meshRenderer = x.GetComponentsInChildren<Renderer>();
-            animator = GetComponent<Animator>();
-            currentColor = meshRenderer[skinIndex[0]].materials[colorIndex[0]].color; 
-        }
         cookieList = GameObject.Find("COOKIE LIST").GetComponent<CookieList>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
+        animator = GetComponent<Animator>();
     }
-      
+    
+    private void Update()
+    {
+        if (controlActive == true)
+        {
+            transform.position = Vector3.SmoothDamp(transform.position, new Vector3(player.position.x, transform.position.y, transform.position.z), 
+            ref velocity, movementTime);
+        }
+    }
+
     public void ParentCons(GameObject cookie)
     {
-        cookie.gameObject.GetComponent<Cookies>().enabled = true;
-        cookie.gameObject.GetComponent<Cookies>().movementTime = cookieList.cookie.Count * 0.06f;
+        cookie.gameObject.GetComponent<Cookies>().movementTime = cookieList.cookie.Count * 1f;
+        animator.Play("Run");
 
         if (cookieList.cookie.Count <= 1)
             cs.sourceTransform = player;
@@ -46,12 +47,13 @@ public class Cookies : MonoBehaviour
 
         cs.weight = 1;
         cookie.GetComponent<ParentConstraint>().AddSource(cs);
-        cookie.gameObject.GetComponent<ParentConstraint>().SetTranslationOffset(0, new Vector3(0f, 0f, 2f));
+        cookie.gameObject.GetComponent<ParentConstraint>().SetTranslationOffset(0, new Vector3(0f, 0f, 1.5f));
         cookie.gameObject.GetComponent<ParentConstraint>().enabled = true;
         cookie.gameObject.GetComponent<ParentConstraint>().constraintActive = true;
+        controlActive = true;
 
-       // if (cookieList.cookie.Count > 2)
-            //StartCoroutine(ScaleEffect());
+       if (cookieList.cookie.Count > 2)
+            StartCoroutine(ScaleEffect());
 
     }
 
@@ -70,7 +72,7 @@ public class Cookies : MonoBehaviour
         }
     }
 
-    // ====================================
+    // ==================================== TRIGGER
 
     private void OnTriggerEnter(Collider other)
     {
@@ -87,42 +89,10 @@ public class Cookies : MonoBehaviour
 
     // ====================================
 
-    public Color GetColor()
-    {
-        return currentColor;
-    }
-
     public void ChangeColor(Color color)
     {
-        for (int i = 0; i < colorIndex.Length; i++)
-        {
-            for (int j = 0; j < skinIndex.Length; j++)
-                meshRenderer[skinIndex[j]].materials[colorIndex[i]].DOColor(color, .25f);
-        }
+
     }
 
-    public void FlashEffect(Color flashColor,Color _currentColor)
-    {
-        for (int i = 0; i < colorIndex.Length; i++)
-        {
-            for (int j = 0; j < skinIndex.Length; j++)
-            {
-                meshRenderer[skinIndex[j]].material.DOColor(flashColor, .05f);
-                StartCoroutine(ChangeToDefaultColor(_currentColor,j));
-            }
-        }
-    }
-
-    private IEnumerator ChangeToDefaultColor(Color _currentColor,int index)
-    {
-        yield return new WaitForSeconds(.0f);
-        meshRenderer[skinIndex[index]].material.DOColor(_currentColor, .05f);
-    }
-
-    public void Run()
-    {
-        animator.Play("Run");
-    }
-
+    // ==================================== *** END
 }
-
