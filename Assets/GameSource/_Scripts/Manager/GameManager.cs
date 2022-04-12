@@ -82,7 +82,6 @@ public class GameManager : Singleton<GameManager>
     {
         isGameStarted = false;
         StartCoroutine(OverPanel());
-        
     }
 
     private IEnumerator OverPanel()

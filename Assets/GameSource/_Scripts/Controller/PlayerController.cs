@@ -54,7 +54,7 @@ public class PlayerController : Singleton<PlayerController>
 
     // ================== COLOR MATCH METHODS
 
-    private void RightColor()
+    public void RightColor()
     {
         PerfectCounterSystem(true);
         up.scoreAdd();
@@ -68,6 +68,26 @@ public class PlayerController : Singleton<PlayerController>
         PlusSpawner(false);
     }
 
+    public void CheckColorMatch(int colorNumber, GameObject cookieX)
+    {
+        if (playerColorNumber == colorNumber)
+        {
+            RightColor();
+            cookieX.tag ="Untagged";
+            cookieX.GetComponent<Cookies>().ParentCons(cookieX.gameObject);
+            cookieList.cookie.Add(cookieX);
+            Debug.Log("RIGHT COLOR");
+        }
+        else
+        {
+            WrongColor();
+            playerAnim.Play("Fail");
+            if (cookieList.cookie.Count == 1)
+                GameManager.Instance.GameOver();
+            
+            Debug.Log("WRONG COLOR");
+        }
+    }
     // ===================================== TRIGGER
 
     private void OnTriggerEnter(Collider other)
@@ -75,24 +95,8 @@ public class PlayerController : Singleton<PlayerController>
         // PLAYER && FIRST COOKIE
         if (other.gameObject.CompareTag("Cookie"))
         {
-            Cookies cookies = other.gameObject.GetComponent<Cookies>();
-            other.tag ="Untagged";
-            cookies.ParentCons(other.gameObject);
-            int x = cookies.myColorNumber;
-
-            CookieList cookieList = FindObjectOfType<CookieList>();
-            cookieList.cookie.Add(other.gameObject);
-
-            if (playerColorNumber == x)
-            {
-                RightColor();
-                Debug.Log("RIGHT COLOR");
-            }
-            else
-            {
-                WrongColor();
-                Debug.Log("WRONG COLOR");
-            }
+            Cookies cookies = other.gameObject.GetComponent<Cookies>();            
+            CheckColorMatch(cookies.myColorNumber, other.gameObject);
             HapticManager.Instance.Vibrate();
         }
 

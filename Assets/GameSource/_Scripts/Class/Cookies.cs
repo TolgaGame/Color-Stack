@@ -42,15 +42,21 @@ public class Cookies : MonoBehaviour
         ref velocity, movementTime);
     }
 
+    // ==================================== METHODS
+
     public void ParentCons(GameObject cookie)
     {
         cookie.gameObject.GetComponent<Cookies>().enabled = true;
         cookie.gameObject.GetComponent<Cookies>().movementTime = cookieList.cookie.Count * 0.03f;
         
-        if (cookieList.cookie.Count <= 1)
+        if (cookieList.cookie.Count == 1)
+        {
             cs.sourceTransform = player;
+        }
         else
-            cs.sourceTransform = cookieList.cookie[cookieList.cookie.Count - 2].transform;
+        {
+            cs.sourceTransform = cookieList.cookie[cookieList.cookie.Count - 1].transform;
+        }      
 
         cs.weight = 1;
         cookie.GetComponent<ParentConstraint>().AddSource(cs);
@@ -59,7 +65,7 @@ public class Cookies : MonoBehaviour
         cookie.gameObject.GetComponent<ParentConstraint>().constraintActive = true;
         animator.Play("Run");
 
-       if (cookieList.cookie.Count > 2)
+       if (cookieList.cookie.Count > 3)
             StartCoroutine(ScaleEffect());
 
     }
@@ -79,6 +85,27 @@ public class Cookies : MonoBehaviour
         }
     }
 
+    public void CheckColorMatch(int colorNumber, GameObject cookieX)
+    {
+        if (myColorNumber == colorNumber)
+        {
+            PlayerController.Instance.RightColor();
+            cookieX.tag ="Untagged";
+            cookieX.GetComponent<Cookies>().ParentCons(cookieX.gameObject);
+            cookieList.cookie.Add(cookieX);
+            Debug.Log("RIGHT COLOR");
+        }
+        else
+        {
+            PlayerController.Instance.WrongColor();
+            Destroy(cookieX); 
+            GetComponent<ParentConstraint>().enabled = false;
+            GetComponent<ParentConstraint>().constraintActive = false;
+            cookieList.cookie.Remove(this.gameObject);
+            animator.Play("Fail");             
+            Debug.Log("WRONG COLOR");
+        }
+    }
     // ==================================== TRIGGER
 
     private void OnTriggerEnter(Collider other)
@@ -87,10 +114,7 @@ public class Cookies : MonoBehaviour
        if (other.CompareTag("Cookie"))
        {
             Cookies cookies = other.gameObject.GetComponentInChildren<Cookies>();
-            other.tag ="Untagged";
-            CookieList cookieList = FindObjectOfType<CookieList>();
-            cookieList.cookie.Add(other.gameObject);
-            ParentCons(other.gameObject);
+            CheckColorMatch(cookies.myColorNumber, other.gameObject);
        }
 
         // PLAYER && COLOR GATE
@@ -117,13 +141,6 @@ public class Cookies : MonoBehaviour
             }
 
         }
-    }
-
-    // ====================================
-
-    public void ChangeColor(Color color)
-    {
-
     }
 
     // ==================================== *** END

@@ -38,33 +38,29 @@ public class SwerveInput : MonoBehaviour
 
     private void Update()
     {
-        if (GameManager.Instance.isGameStarted)
+        if (GameManager.Instance.isGameStarted == true)
         {
             characterController.Move(transform.forward * Time.deltaTime * _moveSpeed);
 
-            if (GameManager.Instance.isGameStarted)
+            SwerveHandler();
+
+            characterController.Move(new Vector3(SwerveAmount() * speedInXAxis * Time.fixedDeltaTime, // X movement jitters in deltatime
+                                        verticalSpeed * Time.deltaTime,
+                                        speedInZAxis * Time.deltaTime));
+
+            if (isRotate)
             {
-                SwerveHandler();
-
-                characterController.Move(new Vector3(SwerveAmount() * speedInXAxis * Time.fixedDeltaTime, // X movement jitters in deltatime
-                                            verticalSpeed * Time.deltaTime,
-                                            speedInZAxis * Time.deltaTime));
-
-                if (isRotate)
-                {
-                    if (SwerveAmount() != 0)
-                        RotateToFinger();
-                    else
-                        RotateToZero();
-                }
-
-                if (isClampX)
-                    ClampPosition();
-
-                if (applyGravity)
-                    ApplyGravity();
+                if (SwerveAmount() != 0)
+                    RotateToFinger();
+                else
+                    RotateToZero();
             }
 
+            if (isClampX)
+                ClampPosition();
+
+            if (applyGravity)
+                ApplyGravity();
         }
     }
 
