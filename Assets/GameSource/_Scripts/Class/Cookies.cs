@@ -26,7 +26,6 @@ public class Cookies : MonoBehaviour
         animator = GetComponent<Animator>();
 
         Transform x = transform.GetChild(1);
-        Debug.Log(x.name);
         myBody[0] = x.transform.GetChild(0).GetComponent<SkinnedMeshRenderer>();
         myBody[1] = x.transform.GetChild(1).GetComponent<SkinnedMeshRenderer>();
     }
@@ -99,13 +98,12 @@ public class Cookies : MonoBehaviour
         {
             PlayerController.Instance.WrongColor();
             Destroy(cookieX); 
-            GetComponent<ParentConstraint>().enabled = false;
-            GetComponent<ParentConstraint>().constraintActive = false;
             cookieList.cookie.Remove(this.gameObject);
-            animator.Play("Fail");             
+            Destroy(this.gameObject);
             Debug.Log("WRONG COLOR");
         }
     }
+
     // ==================================== TRIGGER
 
     private void OnTriggerEnter(Collider other)

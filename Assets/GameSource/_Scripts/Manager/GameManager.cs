@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using DG.Tweening;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -9,7 +8,6 @@ public class GameManager : Singleton<GameManager>
 
     [Header("GameObjects")]
     [Space]
-    public GameObject player;
     public GameObject blocker;
     public GameObject giftContinuebutton;
     public UpgradeManager upgradeManager;
@@ -22,25 +20,16 @@ public class GameManager : Singleton<GameManager>
     public GameObject gamePanel;
     public GameObject selectGiftPanel;
     public GameObject bonusWinPanel;
-    public Image progressBar;
+
     // ======== TEXT =========
     public Text levelText;
     public Text coinText;
     public Text scoreText;
     public Text bonusText;
 
-    [Header(("Perfect Sprites"))]
-    [Space]
-    [SerializeField] Sprite[] perfectSprites;
-    [SerializeField] Sprite[] terribleSprites;
-    public Image amazing;
-    public Image perfect;
-    public Image terrible;
-
     [Header(("Variables"))]
     [HideInInspector] public bool isGameStarted;
     [HideInInspector] public int level;
-    [SerializeField] private int sceneIndex;
     private int coin;
     private int clickNum = 0;
     private int bonusMultipier;
@@ -200,43 +189,8 @@ public class GameManager : Singleton<GameManager>
 
     public void SceneLoad()
     {
-        SceneManager.LoadScene(sceneIndex);
+        SceneManager.LoadScene(0);
     }
 
-    // ===================================== PEFRECT SYSTEM
-
-    public void Perfector()
-    {
-        perfect.gameObject.SetActive(true);
-        perfect.transform.DOScale(5, 0.5f).SetEase(Ease.OutBounce).OnComplete(() =>
-        {
-            perfect.transform.DOScale(1, 0);
-            perfect.gameObject.SetActive(false);
-        });
-    }
-   
-    public void Amazer()
-    {
-        int random = Random.Range(0, perfectSprites.Length);
-        amazing.sprite = perfectSprites[random];
-        amazing.gameObject.SetActive(true);
-        amazing.transform.DOScale(4, 0.5f).SetEase(Ease.OutBounce).OnComplete(() =>
-        {
-            amazing.transform.DOScale(1, 0);
-            amazing.gameObject.SetActive(false);
-        });
-    }
-    
-    public void Terribler()
-    {
-        int random = Random.Range(0, terribleSprites.Length);
-        terrible.sprite = terribleSprites[random];
-        terrible.gameObject.SetActive(true);
-        terrible.transform.DOScale(4, 0.5f).SetEase(Ease.OutBounce).OnComplete(() =>
-        {
-            terrible.transform.DOScale(1, 0);
-            terrible.gameObject.SetActive(false);
-        });
-    }
 
 }

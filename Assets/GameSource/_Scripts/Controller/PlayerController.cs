@@ -44,7 +44,7 @@ public class PlayerController : Singleton<PlayerController>
 
     public void SpeedUp(int addSpeed)
     {
-       //_moveSpeed += addSpeed;
+        GetComponent<SwerveInput>()._moveSpeed += addSpeed;
     }
     
     public void Upgrade()
@@ -52,19 +52,37 @@ public class PlayerController : Singleton<PlayerController>
         upgradeFx.Play();
     }
 
+    public void PlusSpawner(bool isTrue)
+    {
+        if (isTrue)
+        {
+            plusText.outlineColor = Color.green;
+            plusText.text = "+1";
+        }
+        else
+        {
+            plusText.outlineColor = Color.red;
+            plusText.text = "-1";
+        }
+
+        plusText.gameObject.SetActive(true);
+        plusText.rectTransform.DOScale(1.25f, .3f).SetLoops(1, LoopType.Yoyo).OnComplete(() =>
+        {
+            plusText.rectTransform.DOScale(.75f, .3f);
+            plusText.gameObject.SetActive(false);
+        });
+    }
+    
     // ================== COLOR MATCH METHODS
 
     public void RightColor()
     {
-        PerfectCounterSystem(true);
         up.scoreAdd();
         PlusSpawner(true);
     }
 
     public void WrongColor()
     {
-        PerfectCounterSystem(false);
-        TerribleSpanwer();
         PlusSpawner(false);
     }
 
@@ -80,14 +98,16 @@ public class PlayerController : Singleton<PlayerController>
         }
         else
         {
-            WrongColor();
-            playerAnim.Play("Fail");
+            WrongColor();  
             if (cookieList.cookie.Count == 1)
+            {
+                playerAnim.Play("Fail");
                 GameManager.Instance.GameOver();
-            
+            }
             Debug.Log("WRONG COLOR");
         }
     }
+   
     // ===================================== TRIGGER
 
     private void OnTriggerEnter(Collider other)
@@ -109,18 +129,21 @@ public class PlayerController : Singleton<PlayerController>
                 myBody[0].material = cookieList.bodyColors[0];
                 myBody[1].material = cookieList.bodyColors[0];
                 playerColorNumber = 0;
+                water.material.DOColor(Color.red, 1f);
             }
             else if (gate.colorNumber == 1)
             {
                 myBody[0].material = cookieList.bodyColors[1];
                 myBody[1].material = cookieList.bodyColors[1];
                 playerColorNumber = 1;
+                water.material.DOColor(Color.yellow, 1f);
             }
             else if (gate.colorNumber == 2)
             {
                 myBody[0].material = cookieList.bodyColors[2];
                 myBody[1].material = cookieList.bodyColors[2]; 
                 playerColorNumber = 2;
+                water.material.DOColor(Color.green, 1f);
             }
 
         }
@@ -146,58 +169,4 @@ public class PlayerController : Singleton<PlayerController>
         }
     }
     
-    // ===================================== UI
-
-    public void PlusSpawner(bool isTrue)
-    {
-        if (isTrue)
-        {
-            plusText.outlineColor = Color.green;
-            plusText.text = "+1";
-        }
-        else
-        {
-            plusText.outlineColor = Color.red;
-            plusText.text = "-1";
-        }
-
-        plusText.gameObject.SetActive(true);
-        plusText.rectTransform.DOScale(1.25f, .3f).SetLoops(1, LoopType.Yoyo).OnComplete(() =>
-        {
-            plusText.rectTransform.DOScale(.75f, .3f);
-            plusText.gameObject.SetActive(false);
-        });
-    }
-
-    public void PerfectCounterSystem(bool isTrue)
-    {
-        if (isTrue)
-        {
-            perfectCounter++;
-            terribleCounter = 0;
-
-            if (perfectCounter % 3 == 0)
-            {
-                GameManager.Instance.Amazer();
-                perfectCounter = 0;
-            }
-        }
-        else
-        {
-            terribleCounter++;
-            perfectCounter = 0;
-
-            if(terribleCounter % 3 == 0)
-            {
-                GameManager.Instance.Terribler();
-                terribleCounter = 0;
-            }
-        }
-    }
-
-    public void TerribleSpanwer()
-    {
-        perfectCounter = 0;
-    }
-
 }
