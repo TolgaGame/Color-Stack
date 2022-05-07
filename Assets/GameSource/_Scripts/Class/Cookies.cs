@@ -95,11 +95,11 @@ public class Cookies : MonoBehaviour
             Debug.Log("RIGHT COLOR");
         }
         else
-        {
+        {   
+            Destroy(cookieList.cookie[cookieList.cookie.Count - 1].transform.gameObject);
+            cookieList.cookie.Remove(cookieList.cookie[cookieList.cookie.Count - 1].transform.gameObject); 
+            Destroy(cookieX);
             PlayerController.Instance.WrongColor();
-            Destroy(cookieX); 
-            cookieList.cookie.Remove(this.gameObject);
-            Destroy(this.gameObject);
             Debug.Log("WRONG COLOR");
         }
     }

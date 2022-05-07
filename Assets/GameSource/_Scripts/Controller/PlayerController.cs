@@ -98,11 +98,17 @@ public class PlayerController : Singleton<PlayerController>
         }
         else
         {
-            WrongColor();  
             if (cookieList.cookie.Count == 1)
             {
                 playerAnim.Play("Fail");
                 GameManager.Instance.GameOver();
+            }
+            else if (cookieList.cookie.Count == 2)
+            {        
+                Destroy(cookieList.cookie[cookieList.cookie.Count - 1].transform.gameObject);
+                cookieList.cookie.Remove(cookieList.cookie[cookieList.cookie.Count - 1].transform.gameObject); 
+                Destroy(cookieX);
+                WrongColor(); 
             }
             Debug.Log("WRONG COLOR");
         }
@@ -150,16 +156,10 @@ public class PlayerController : Singleton<PlayerController>
         // PLAYER && FINISH
         if (other.gameObject.CompareTag("Finish"))
         {
+            GameManager.Instance.isGameStarted = false;
             transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 0, transform.localEulerAngles.z);
-            FinishLine.Instance.myEvent.Invoke();
             Color color = new Color32(0, 111, 255, 255);
             water.material.DOColor(color, 1f);
-        }
-        // PLAYER && BONUS LINE
-        if (other.CompareTag("BonusLine"))
-        {
-            Destroy(other.gameObject);
-            GameManager.Instance.FinishLevel();
         }
         // PLAYER && COIN
         if (other.gameObject.CompareTag("Coin"))
