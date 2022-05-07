@@ -9,10 +9,7 @@ TagManager:
   - Coin
   - Gate
   - Obstacle
-  - Wall
-  - Bonus
   - BonusLevel
-  - BonusLine
   layers:
   - Default
   - TransparentFX

@@ -52,6 +52,7 @@ public class GameManager : Singleton<GameManager>
 
     public void FinishLevel()
     {
+        PlayerController.Instance.playerAnim.Play("Win");
         isGameStarted = false;
     }
 
@@ -70,6 +71,7 @@ public class GameManager : Singleton<GameManager>
     public void GameOver()
     {
         isGameStarted = false;
+        PlayerController.Instance.playerAnim.Play("Fail");
         StartCoroutine(OverPanel());
     }
 

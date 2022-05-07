@@ -11,6 +11,7 @@ public class SwerveInput : MonoBehaviour
     private float moveInX;
     private Vector3 swerveAmount;
     public float _moveSpeed;
+    public bool controlSwipe = true;
 
     [Space(10)]
     [SerializeField] private bool isRotate;
@@ -68,22 +69,25 @@ public class SwerveInput : MonoBehaviour
 
     private void SwerveHandler()
     {
-        if (Input.GetMouseButtonDown(0))
+        if (controlSwipe == true)
         {
-            lastFrameFingerPositionX = Input.mousePosition.x;
-        }
-        else if (Input.GetMouseButton(0))
-        {
-            moveInX = Input.mousePosition.x - lastFrameFingerPositionX;
-            lastFrameFingerPositionX = Input.mousePosition.x;
-        }
-        else if (Input.GetMouseButtonUp(0))
-        {
-            moveInX = 0f;
-            
-        }
+            if (Input.GetMouseButtonDown(0))
+            {
+                lastFrameFingerPositionX = Input.mousePosition.x;
+            }
+            else if (Input.GetMouseButton(0))
+            {
+                moveInX = Input.mousePosition.x - lastFrameFingerPositionX;
+                lastFrameFingerPositionX = Input.mousePosition.x;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                moveInX = 0f;
+                
+            }
 
-        swerveAmount.x = moveInX;
+            swerveAmount.x = moveInX;
+        }
     }
 
     public float SwerveAmount()
