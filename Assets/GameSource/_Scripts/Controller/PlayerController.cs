@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using DG.Tweening;
 using LPWAsset;
 using TMPro;
@@ -15,7 +16,7 @@ public class PlayerController : Singleton<PlayerController>
     [Space]
     [SerializeField] TextMeshProUGUI plusText;
     [SerializeField] UpgradeManager up;
-    [SerializeField] LowPolyWaterScript water;
+    private LowPolyWaterScript water;
     private CookieList cookieList;
 
     [Header("Variables")]
@@ -35,11 +36,17 @@ public class PlayerController : Singleton<PlayerController>
 
     private void Start()
     {
+        cookieList = GameObject.Find("COOKIE LIST").GetComponent<CookieList>();
+        StartCoroutine(Setup());
+    } 
+    
+    private IEnumerator Setup()
+    {
+        yield return new WaitForSeconds(1f);
+        water = GameObject.Find("Water").GetComponent<LowPolyWaterScript>();
         Color color = new Color32(0, 111, 255, 255);
         water.material.DOColor(color, 1f);
-        cookieList = GameObject.Find("COOKIE LIST").GetComponent<CookieList>();
-    } 
-  
+    }
    // ================== UPGRADE METHODS
 
     public void SpeedUp(int addSpeed)

@@ -54,11 +54,12 @@ public class GameManager : Singleton<GameManager>
     {
         PlayerController.Instance.playerAnim.Play("Win");
         isGameStarted = false;
+        StartCoroutine(FinishPanel());
     }
 
     public IEnumerator FinishPanel()
     {
-        yield return new WaitForSeconds(1f);
+        yield return new WaitForSeconds(3f);
         bonusText.text = "+" + bonusMultipier;
         gamePanel.SetActive(false);
         finishPanel.SetActive(true);
