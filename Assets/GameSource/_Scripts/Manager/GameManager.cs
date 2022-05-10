@@ -19,20 +19,16 @@ public class GameManager : Singleton<GameManager>
     public GameObject menuPanel;
     public GameObject gamePanel;
     public GameObject selectGiftPanel;
-    public GameObject bonusWinPanel;
 
     // ======== TEXT =========
     public Text levelText;
     public Text coinText;
-    public Text scoreText;
-    public Text bonusText;
 
     [Header(("Variables"))]
     [HideInInspector] public bool isGameStarted;
     [HideInInspector] public int level;
     private int coin;
     private int clickNum = 0;
-    private int bonusMultipier;
 
     // ===================================== START
 
@@ -60,10 +56,9 @@ public class GameManager : Singleton<GameManager>
     public IEnumerator FinishPanel()
     {
         yield return new WaitForSeconds(3f);
-        bonusText.text = "+" + bonusMultipier;
         gamePanel.SetActive(false);
         finishPanel.SetActive(true);
-        AddCoin(bonusMultipier);
+        AddCoin(50);
         GetReward.instance.callFillBox();
         level++;
         PlayerPrefs.SetInt("level", level);
@@ -104,29 +99,12 @@ public class GameManager : Singleton<GameManager>
         SceneLoad();
     }
    
-    public void BonusLevelClaimButton()
-    {
-        AddCoin(50);
-        SceneLoad();
-    }
-
     public void RewardButton()
     {
         AddCoin(50);
         SceneLoad();
     }
 
-    public void SetBonus(int value)
-    {
-        if(value > bonusMultipier)
-            bonusMultipier = value;
-    }
-
-    public float GetBonusMultipier()
-    {
-        return bonusMultipier;
-    }
-   
     // ===================================== LEVEL
 
     private void LevelGenerate()
