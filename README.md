@@ -2,7 +2,7 @@
 
 <b>Color Stack Game made with Unity..</b>
 
-<p>I made Hyper Casual production time in 2021. Sample demo : Runner & Stack mechanics.
+<p>I made Hyper Casual production time in <b>2021 year</b>. Sample demo : Runner & Stack mechanics.
 Only script content (due to copyright and 3rd party usage assets)</p>
 
 <b>Using C# language..</b>
